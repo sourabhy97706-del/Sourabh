@@ -28,7 +28,7 @@ The email UI records the opt-in preference in the tracker. Actual automatic deli
    The function independently checks a `CRON_SECRET` bearer token. Supabase's `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are available to Edge Functions by default.
 3. Set server secrets (never commit them):
    `supabase secrets set CRON_SECRET="a-long-random-secret" RESEND_API_KEY="re_..." RESEND_FROM_EMAIL="Sourabh Routine <reports@your-verified-domain.com>"`
-4. In Supabase SQL Editor, enable `pg_cron` and `pg_net` extensions. Store the function URL and the same secret in Supabase Vault, then schedule the POST call at 03:30 UTC (09:00 India time). Example after saving Vault secrets named `daily_report_url` and `daily_report_cron_secret`:
+4. In Supabase SQL Editor, enable `pg_cron`, `pg_net`, and Vault if they are not enabled. Store the function URL and the exact same secret used in `CRON_SECRET` in Vault. Replace the example values below with your actual function URL and secret (do not commit real secrets to GitHub):\n   ```sql\n   select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co/functions/v1/daily-report', 'daily_report_url');\n   select vault.create_secret('REPLACE_WITH_THE_SAME_LONG_RANDOM_CRON_SECRET', 'daily_report_cron_secret');\n   ```\n   Then schedule the POST call at 03:30 UTC (09:00 India time), using the Vault secret names above:
    ```sql
    select cron.schedule(
      'sourabh-daily-routine-email',
